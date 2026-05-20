@@ -1,0 +1,49 @@
+π_nombre, nombreproducto, marca ( σ_tiposuplemento != 'Proteina' ( ρ_cedula→cedulausuario ( usuario ) ⋈ compra ⋈ detalleventa ⋈ ρ_codigo→codigosuplemento ( suplemento ) ) )
+
+//todas las personas que hayan adquirido suplementos que no sean proteina
+
+select usuario.nombre, suplemento.nombreproducto, suplemento.marca from usuario
+join compra on compra.cedulausuario = usuario.cedula
+join detalleventa on detalleventa.idcompra = compra.idcompra
+join suplemento on suplemento.codigo = detalleventa.codigosuplemento
+where suplemento.tiposuplemento != 'Proteina';
+
+
+π_idcompra, nombre, preciototal ( σ_preciototal > 50.00 ( ρ_cedula→cedulausuario ( usuario ) ⋈ compra ⋈ detalleventa ) )
+
+//listar el numero de compra nombre de la persona y precio total de las ventas que cuestan mas de 50 dolares
+
+select compra.idcompra, usuario.nombre, detalleventa.preciototal from compra
+join usuario on usuario.cedula = compra.cedulausuario
+join detalleventa on detalleventa.idcompra = compra.idcompra
+where detalleventa.preciototal > 50.00;
+
+
+σ_nombreempresa == 'SuplementPro' ( ρ_codigo→codigosuplemento ( suplemento ) ⋈ proveedorsuplemento ⋈ ρ_cedula→cedulaproveedor ( proveedor ) )
+
+//mostrar los suplementos que son distribuidos por SuplementPro
+
+select suplemento.nombreproducto, suplemento.marca, proveedor.nombreempresa from suplemento
+join proveedorsuplemento on proveedorsuplemento.codigosuplemento = suplemento.codigo
+join proveedor on proveedor.cedula = proveedorsuplemento.cedulaproveedor
+where proveedor.nombreempresa = 'SuplementPro';
+
+
+π_nombreproducto, marca, costo, stock ( σ_(stock == 15 or stock == 20) ( ρ_codigo→codigosuplemento ( suplemento ) ⋈ proveedorsuplemento ) )
+
+//suplementos el costo y la marca de los que tienen un stock en inventario de 15 o 20 unidades
+
+select suplemento.nombreproducto, suplemento.marca, proveedorsuplemento.costo, suplemento.stock from suplemento
+join proveedorsuplemento on proveedorsuplemento.codigosuplemento = suplemento.codigo
+where suplemento.stock = 15 or suplemento.stock = 20;
+
+
+π_nombre, nombreproducto, marca ( σ_tiposuplemento == 'Proteina' ( ρ_cedula→cedulausuario ( usuario ) ⋈ compra ⋈ detalleventa ⋈ ρ_codigo→codigosuplemento ( suplemento ) ) )
+
+//todas las personas que han comprado un suplemento de proteina
+
+select usuario.nombre, suplemento.nombreproducto, suplemento.marca from usuario
+join compra on compra.cedulausuario = usuario.cedula
+join detalleventa on detalleventa.idcompra = compra.idcompra
+join suplemento on suplemento.codigo = detalleventa.codigosuplemento
+where suplemento.tiposuplemento = 'Proteina';
